@@ -219,8 +219,10 @@ struct NamedTupleParser {
       if constexpr (is_required_field) {
         constexpr auto current_name =
             internal::nth_element_t<_i, FieldTypes...>::name();
-        _errors->emplace_back(Error(
+#if 0
+	_errors->emplace_back(Error(
             "Field named '" + std::string(current_name) + "' not found."));
+#endif
       } else {
         if constexpr (!std::is_const_v<ValueType>) {
           ::new (rfl::get<_i>(_view)) ValueType();
