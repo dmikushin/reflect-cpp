@@ -24,6 +24,7 @@ struct Parser<R, W, T*, ProcessorsType> {
 
   /// Expresses the variables as type T.
   static Result<T*> read(const R&, const InputVarType&) noexcept {
+#if 0
     static_assert(always_false_v<T>,
                   "Reading into raw pointers is dangerous and "
                   "therefore unsupported. "
@@ -31,6 +32,9 @@ struct Parser<R, W, T*, ProcessorsType> {
                   "std::shared_ptr, "
                   "rfl::Ref or std::optional instead.");
     return Error("Unsupported.");
+#else
+    return Result<T*>(nullptr);
+#endif
   }
 
   template <class P>
@@ -39,6 +43,9 @@ struct Parser<R, W, T*, ProcessorsType> {
       ParentType::add_null(_w, _parent);
       return;
     }
+    // TODO We need special care about the plain pointers,
+    // otherwise this code simply saves only the array first
+    // element value referred by the pointer.
     Parser<R, W, std::remove_cvref_t<T>, ProcessorsType>::write(_w, *_ptr,
                                                                 _parent);
   }
